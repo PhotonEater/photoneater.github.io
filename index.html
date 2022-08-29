@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./assets/discord-invite.css">
+    <script src="./src/console-capture.js"></script>
+    <script src="./lib/jquery-3.5.1.min.js"></script>
+    <script src="./lib/chart.js-2.8.0.js"></script>
+    <script src="./lib/chartjs-plugin-datalabels-0.7.0.js"></script>
+    <script src="./lib/jscolor.min.js"></script>
+    <script src="./lib/bowser-2.9.0.min.js"></script>
+    <script src="./lib/discord-invite.js"></script>
+    <script src="./lib/svg-pan-zoom-3.6.1.min.js"></script>
+    <script src="./src/misc-lib.js"></script>
+    <script src="./src/model/files-database.js"></script>
+    <script src="./src/model/map-type.js"></script>
+    <script src="./src/model/political-party.js"></script>
+    <script src="./src/model/map-source.js"></script>
+    <script src="./src/display/dropdowns/map-type-dropdown.js"></script>
+    <script src="./src/display/dropdowns/map-source-dropdown.js"></script>
+    <script src="./src/display/dropdowns/party-dropdowns.js"></script>
+    <script src="./src/display/dropdowns/margins-dropdown.js"></script>
+    <script src="./src/display/dropdowns/shift-dropdown.js"></script>
+    <script src="./src/display/dropdowns/settings-dropdown.js"></script>
+    <script src="./src/display/dropdowns/compare-dropdown.js"></script>
+    <script src="./src/display/dropdowns/copy-dropdown.js"></script>
+    <script src="./src/display/dropdowns/countdown-dropdown.js"></script>
+    <script src="./src/display/totals-pie-chart.js"></script>
+    <script src="./src/display/map-display.js"></script>
+    <script src="./src/display/control-events.js"></script>
+    <script src="./src/display/file-loader.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107565763-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-107565763-1');
+    </script>
+    <title>USA Election Map</title>
+    <link rel="SHORTCUT ICON" type="image/x-icon" href="./assets/favicon.ico"/>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <meta charset="UTF-8">
+    <meta name="description" content="Interactive USA election map for past results and future projections.">
+    <meta property="og:title" content="JacksonJude's USA Election Map" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Interactive USA election map for past results and future projections.">
+    <meta property="og:image" content="https://map.jacksonjude.com/assets/favicon.png" />
+  </head>
+  <body style="background-color: black; margin: 0px;" onresize="resizeElements()">
+    <div class="topnav">
+      <a href="https://jacksonjude.com" target="_blank" style="padding: 0; padding-left: 3px; padding-right: 3px; margin-top: 4px;"><img src="./assets/favicon.ico" style="position: relative; top: 2px; padding-top: 1px; width: 45px; height: 45px;" /></a>
+      <div style="display: inline-block; margin-top: 4px;">
+        <a id="toggleHelpBoxButton" onclick="toggleHelpBox(this)">Controls</a>
+        <div class="dropdown" onmouseenter="deselectDropdownButton()">
+          <a id="cycleMapTypeButton" onclick="cycleMapType(this)" style="padding: 0; padding-left: 3px; padding-right: 3px; margin-top: 0px;"><img src="./assets/usa-pres.png" style="position: relative; top: 2px; padding-top: 1px; width: 45px; height: 45px;"/></a>
+          <div id="mapTypesDropdownContent" class="dropdown-content" style="min-width: 45px;">
+            <div id="mapTypesDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden;">
+            </div>
+          </div>
+        </div>
+        <div class="dropdown" onmouseenter="deselectDropdownButton()">
+          <a id="sourceToggleButton" style="min-width: 204px">Select Source</a>
+          <div id="mapSourcesDropdownContent" class="dropdown-content" style="min-width: 240px;">
+            <div id="mapSourcesDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden;">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="border-left: 40px solid; display: inline-block;"></div>
+      <div style="display: inline-block; margin-top: 4px;">
+        <div class="dropdown" onmouseenter="deselectDropdownButton()">
+          <a id="homepageButton" href="https://jacksonjude.com" target="_blank" style="min-width: 250px">map.jacksonjude.com</a>
+          <div id="homepageDropdownContent" class="dropdown-content" style="min-width: 275px">
+            <div id="homepageDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden;">
+              <h5 style="margin: 0; text-align: left;">
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item">
+                  <a class="not-dropdown-item" href="https://www.yapms.com" target="_blank"><img src="./assets/yapms.png" style="position: relative; top: 5px; width: 20px; height: 20px;" /></a>&nbsp; <a class="not-dropdown-item" href="https://www.yapms.com/" target="_blank" style="color: white;">YAPms</a>: <a class="not-dropdown-item" href="https://www.yapms.com/app/?t=USA_2020_presidential" target="_blank" style="color: white;">pres</a>, <a class="not-dropdown-item" href="https://www.yapms.com/app/?t=USA_2022_senate" target="_blank" style="color: white;">senate</a>, and <a class="not-dropdown-item" href="https://www.yapms.com/app/?t=USA_2022_governors" target="_blank" style="color: white;">governor</a> map outlines<br>
+                </div>
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item">
+                  <a class="not-dropdown-item" href="https://fivethirtyeight.com" target="_blank"><img src="./assets/fivethirtyeight.png" style="position: relative; top: 5px; width: 20px; height: 20px;" /></a>&nbsp; <a class="not-dropdown-item" href="https://fivethirtyeight.com" target="_blank" style="color: white;">FiveThirtyEight</a>: 2020 <a class="not-dropdown-item" href="https://projects.fivethirtyeight.com/polls/president-general/" target="_blank" style="color: white;">poll</a> and <a class="not-dropdown-item" href="https://projects.fivethirtyeight.com/2020-election-forecast/" target="_blank" style="color: white;">projection</a> data<br>
+                </div>
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item">
+                  <a class="not-dropdown-item" href="https://cookpolitical.com" target="_blank"><img src="./assets/cookpolitical.png" style="position: relative; top: 5px; width: 20px; height: 20px;" /></a>&nbsp; <a class="not-dropdown-item" href="https://cookpolitical.com/" target="_blank" style="color: white;">Cook Political</a>: pres, senate, and governor data<br>
+                </div>
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item">
+                  <a class="not-dropdown-item" href="https://www.youtube.com/channel/UCZ0H9_lidl67AqiC9-RxfvA" target="_blank"><img src="./assets/lte.png" style="position: relative; top: 5px; width: 20px; height: 20px;" /></a>&nbsp; <a class="not-dropdown-item" href="https://www.youtube.com/channel/UCZ0H9_lidl67AqiC9-RxfvA" target="_blank" style="color: white;">Let's Talk Elections</a>: <a class="not-dropdown-item" href="https://www.youtube.com/playlist?list=PLYs1aUsYMVipo2uDLV3mVDqXj3Xc9a9am" target="_blank" style="color: white;">2022 senate projections</a><br>
+                </div>
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item">
+                  <a class="not-dropdown-item" href="https://www.youtube.com/channel/UC4bC-T3iypwMjLd-teG-sgQ" target="_blank"><img src="./assets/pa.png" style="position: relative; top: 5px; width: 20px; height: 20px;" /></a>&nbsp; <a class="not-dropdown-item" href="https://www.youtube.com/channel/UC4bC-T3iypwMjLd-teG-sgQ" target="_blank" style="color: white;">Political Analysis</a>: <a class="not-dropdown-item" href="https://youtube.com/playlist?list=PLsvuE1oEoI9ROWu7--ar8nWIrFc62XI0c" target="_blank" style="color: white;">2022 senate projections</a><br>
+                </div>
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item">
+                  <a class="not-dropdown-item" href="https://electionlab.mit.edu/data" target="_blank"><img src="./assets/mit.png" style="position: relative; top: 5px; width: 20px; height: 20px;" /></a>&nbsp; <a class="not-dropdown-item" href="https://electionlab.mit.edu/data" target="_blank" style="color: white;">MIT Election Data</a>: past <a class="not-dropdown-item" href="https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/42MVDX/MFU99O&version=5.0" target="_blank" style="color: white;">pres</a>, <a class="not-dropdown-item" href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PEJ5QU" target="_blank" style="color: white;">senate</a>, house data<br>
+                </div>
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item">
+                  <a class="not-dropdown-item" href="https://uselectionatlas.org" target="_blank"><img src="./assets/daveleip.png" style="position: relative; top: 5px; width: 20px; height: 20px;" /></a>&nbsp; <a class="not-dropdown-item" href="https://uselectionatlas.org" target="_blank" style="color: white;">Dave Leip's Atlas</a>: past <a class="not-dropdown-item" href="https://uselectionatlas.org/RESULTS" target="_blank" style="color: white;">presidential results</a><br>
+                </div>
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item">
+                  <a class="not-dropdown-item" href="https://github.com/jacksonjude/USA-Election-Map" target="_blank"><img src="./assets/github.png" style="position: relative; top: 5px; width: 20px; height: 20px;" /></a>&nbsp; <a class="not-dropdown-item" href="https://github.com/jacksonjude/USA-Election-Map" target="_blank" style="color: white;">Source code and update notes on GitHub page</a><br>
+                </div>
+                <div class='dropdown-separator'></div>
+                <div class="dropdown-item" style="display: flex; text-align: center">
+                  <div class="dropdown-button" style="background-color: #e02e2e; margin-right: 5px" onclick="clearDatabases()">Clear Cache</div>
+                  <div class="dropdown-button" style="background-color: #4279bd; margin-left: 5px" onclick="downloadConsoleBlob()">Download Logs</div><br>
+                </div>
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="border-left: 40px solid; display: inline-block;"></div>
+      <div style="display: inline-block; margin-top: 4px;">
+        <div class="dropdown" onmouseenter="deselectDropdownButton()">
+          <a id="marginEditButton" style="min-width: 70px">Margins</a>
+          <div id="marginsDropdownContent" class="dropdown-content" style="min-width: 126px">
+            <div id="marginsDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden;">
+            </div>
+          </div>
+        </div>
+        <div class="dropdown" onmouseenter="deselectDropdownButton()">
+          <a id="shiftButton" style="min-width: 70px; display: none;">Shift</a>
+          <div id="shiftDropdownContent" class="dropdown-content" style="min-width: 126px">
+            <div id="shiftDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden;">
+              <div class='dropdown-separator'></div>
+              <a class="partyShiftConstantButton" onclick="addConstantMarginToMap(1)" style="display:flex; justify-content:center;">
+                Shift All by&nbsp;<span class="partyShiftText">+1</span>
+              </a>
+              <div class='dropdown-separator'></div>
+              <a class="partyShiftConstantButton" onclick="addConstantMarginToMap(5)" style="display:flex; justify-content:center;">
+                Shift All by&nbsp;<span class="partyShiftText">+5</span>
+              </a>
+              <div class='dropdown-separator'></div>
+              <a class="partyShiftConstantButton" onclick="addConstantMarginToMap(15)" style="display:flex; justify-content:center;">
+                Shift All by&nbsp;<span class="partyShiftText">+15</span>
+              </a>
+              <div class='dropdown-separator'></div>
+              <a onclick="addConstantMarginToMap(getTippingPointRegion().margin, politicalParties[dropdownPoliticalPartyIDs[1]])" style="display:flex; justify-content:center;">
+                Shift by tipping point
+              </a>
+              <div class='dropdown-separator'></div>
+              <a onclick="if (!getNationalPopularVoteData()) return; addConstantMarginToMap(getNationalPopularVoteData().margin, politicalParties[dropdownPoliticalPartyIDs[dropdownPoliticalPartyIDs[1] == getNationalPopularVoteData().partyID ? 0 : 1]])" style="display:flex; justify-content:center;">
+                Shift by NPV margin
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown" onmouseenter="deselectDropdownButton()">
+          <a id="settingsButton" style="min-width: 70px">Settings</a>
+          <div id="settingsDropdownContent" class="dropdown-content" style="min-width: 275px">
+            <div id="settingsDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden;">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="border-left: 20px solid; display: inline-block;"></div>
+      <div style="display: inline-block; margin-top: 4px;">
+        <div class="dropdown" onmouseenter="deselectDropdownButton()">
+          <a id="compareButton" style="min-width: 70px" onclick="applyCompareToCustomMap()">Compare</a>
+          <div id="compareDropdownContent" class="dropdown-content" style="min-width: 305px">
+            <div id="compareArrayDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden; display: none;">
+              <div class='dropdown-separator'></div>
+              <a onclick="loadCompareItemMapSource(0)" style="display:flex; justify-content:center;">
+                <img id="compareItemImage-0" src="" class="compareitemimage" style="width: 23px; height: 23px; display: none; padding-right: 10px;" />
+                <span id="compareItem-0" class="compareitemtext">
+                  &lt;Empty&gt;
+                </span>
+              </a>
+              <div class='dropdown-separator'></div>
+              <a onclick="loadCompareItemMapSource(1)" style="display:flex; justify-content:center;">
+                <img id="compareItemImage-1" src="" class="compareitemimage" style="width: 23px; height: 23px; display: none; padding-right: 10px;" />
+                <span id="compareItem-1" class="compareitemtext">
+                  &lt;Empty&gt;
+                </span>
+              </a>
+              <div class='dropdown-separator'></div>
+              <a id="clearCompareButton" onclick="clearMap()" style="text-align: center;">
+                Clear Compare Sources
+              </a>
+              <div class='dropdown-separator'></div>
+              <a id="swapCompareButton" onclick="swapCompareMapSources(); updateCompareMapSources([true, true], true, true)" style="text-align: center;">
+                Swap Compare Sources
+              </a>
+              <div class='dropdown-separator'></div>
+              <a id="compareSortModeButton" onclick="toggleCompareSortMode(this); applyCompareToCustomMap()" style="text-align: center;">
+                Sort by voteshare
+              </a>
+            </div>
+            <div id="comparePresetsDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden;">
+            </div>
+          </div>
+        </div>
+        <div class="dropdown" onmouseenter="deselectDropdownButton()">
+          <a id="editDoneButton" onclick="toggleEditing()" style="min-width: 39px">Copy</a>
+          <div id="copyDropdownContent" class="dropdown-content" style="min-width: 160px">
+            <div id="copyDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden;">
+              <div class='dropdown-separator'></div>
+              <a id="editMarginButton" onclick="selectEditMode(EditingMode.margin)" style="text-align: center;">
+                Edit by margin
+              </a>
+              <div class='dropdown-separator'></div>
+              <a id="editVoteshareButton" onclick="selectEditMode(EditingMode.voteshare)" style="text-align: center;">
+                Edit by voteshare
+              </a>
+            </div>
+          </div>
+        </div>
+        <a id="clearMapButton">Clear</a>
+      </div>
+      <div class="loader" id="loader"></div>
+      <div style="display: inline-block; margin-top: 4px; margin-right: 8px; float: right;">
+        <div class="dropdown">
+          <a href="https://en.wikipedia.org/wiki/Timeline_of_the_2020_United_States_presidential_election#December_2020" target="_blank" id="countdownDisplay" style="min-width: 300px; font-size: 25px; font-family: 'Bree5erif-Mono'; padding: 8.5px 16px;"></a>
+          <div class="dropdown-content" style="min-width: 336px">
+            <div id="countdownsDropdownContainer" style="border-radius: 4px; margin-left: 4px; overflow: hidden">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type='file' id='uploadFileInput' style='display: none'>
+    <div id="mapzoom" style="margin: 0px; zoom: 100%; position: relative; float: left; margin-left: 25px; overflow: hidden;" oncontextmenu="return false">
+    </div>
+    <a id="mapCloseButton" onclick="zoomOutMap()" style="display: none; cursor: pointer; user-select: none; -webkit-user-select: none;"><img id="mapCloseButtonImage" src="./assets/close-icon.png" style="position: absolute; margin-top: 25px; width: 50px; height: 50px;  text-decoration: none;" /></a>
+    <div style="display: flex; flex-direction: column; float: right;">
+      <div id="totalsPieChartContainer" style="display: inline-block; vertical-align: top; float: right; padding-top: 10px; padding-right: 50px; user-select: none; -webkit-user-select: none;">
+        <canvas id="totalsPieChart"></canvas>
+      </div>
+      <div id="partyDropdownsBoxContainer" class="boxcontainer textbox" style="display: inline-block; margin-top: 10px; margin-right: 45px; float: right;">
+        <div id="partyDropdownsBox" class="box" style="padding: 10px;">
+          <div id="partyDropdownsFlexbox" style="display: flex; justify-content: center; min-height: 110px; align-items: center">
+            <div id="partyDropdownsContainer" class="topnav" style="user-select: none; -webkit-user-select: none; background-color: transparent">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="discordInviteContainer" style="display: inline-block; padding-top: 10px; margin-right: 50px; user-select: none; -webkit-user-select: none; float: right">
+        <div id="discordInviteBox" style="background-color: transparent"></div>
+        <script>
+        discordInvite.init({
+          inviteCode: '44HMc8AY3G',
+          title: 'jacksonjude.com',
+          introText: "Join the Discord Server",
+          width: 466
+        })
+        discordInvite.render()
+        </script>
+      </div>
+    </div>
+    <div id="helpboxcontainer" class="boxcontainer textbox" style="display: none; vertical-align: top; float: right; padding-top: 20px; padding-right: 50px;  user-select: none; -webkit-user-select: none;">
+      <div id="helpbox" class="box">
+      </div>
+    </div>
+    <div id="sliderDateDisplayContainer" style="position: relative; float: left; left: 45px;">
+      <span style="display: inline-block; float: left;">
+        <span class="slidecontainer" id="dataMapDateSliderContainer" style="user-select: none; -webkit-user-select: none; display: none;">
+          <input type="range" min="1" max="1" value="1" class="slider" id="dataMapDateSlider" oninput="displayDataMap(this.value)" onmousedown="this.style.opacity = '1'" onmouseup="this.style.opacity = null" style="margin-bottom: 0px">
+          <span id="dataMapSliderStepList" class="ticks" style="max-height: 0px;">
+          </span>
+        </span>
+      </span>
+      <h3 id="dateDisplay" style="display: inline-block; float: left; padding-left: 20px; vertical-align: center; min-width: 200px; color: white; font-family: 'Bree5erif-Mono'; font-size: 18px; user-select: none; -webkit-user-select: none;"></h3>
+    </div>
+    <div id="firstCompareSliderDateDisplayContainer" style="position: relative; float: left; left: 45px; display: none;">
+      <span style="display: inline-block; float: left;">
+        <span class="slidecontainer" id="firstCompareDataMapDateSliderContainer" style="user-select: none; -webkit-user-select: none;">
+          <input type="range" min="1" max="1" value="1" class="slider" id="firstCompareDataMapDateSlider" oninput="setCompareSourceDate(0, this.value)" onmousedown="this.style.opacity = '1'" onmouseup="this.style.opacity = null" style="margin-bottom: 0px">
+          <span id="firstCompareDataMapSliderStepList" class="ticks" style="max-height: 0px;">
+          </span>
+        </span>
+      </span>
+      <h3 id="firstCompareDateDisplay" style="display: inline-block; float: left; padding-left: 20px; vertical-align: center; min-width: 200px; color: white; font-family: 'Bree5erif-Mono'; font-size: 18px; user-select: none; -webkit-user-select: none;"></h3>
+    </div>
+    <div id="secondCompareSliderDateDisplayContainer" style="position: relative; float: left; left: 45px; display: none;">
+      <span style="display: inline-block; float: left;">
+        <span class="slidecontainer" id="secondCompareDataMapDateSliderContainer" style="user-select: none; -webkit-user-select: none;">
+          <input type="range" min="1" max="1" value="1" class="slider" id="secondCompareDataMapDateSlider" oninput="setCompareSourceDate(1, this.value)" onmousedown="this.style.opacity = '1'" onmouseup="this.style.opacity = null" style="margin-bottom: 0px">
+          <span id="secondCompareDataMapSliderStepList" class="ticks" style="max-height: 0px;">
+          </span>
+        </span>
+      </span>
+      <h3 id="secondCompareDateDisplay" style="display: inline-block; float: left; padding-left: 20px; vertical-align: center; min-width: 200px; color: white; font-family: 'Bree5erif-Mono'; font-size: 18px; user-select: none; -webkit-user-select: none;"></h3>
+    </div>
+    <div id="regionboxcontainer" class="boxcontainer" style="display: none; opacity: 0; position: fixed; font-family: 'Bree5erif-Mono'; user-select: none; -webkit-user-select: none; transition: opacity 0.1s linear">
+      <div id="regionbox" class="box">
+      </div>
+    </div>
+  </body>
+</html>
