@@ -317,12 +317,12 @@ document.addEventListener('keypress', async function(e) {
     switch (selectedDropdownDivID)
     {
       case "compareDropdownContent":
-      if (parseInt(e.key)-1 >= getDefaultCompareSourceIDs().length) { return }
+      if (parseInt(e.key)-1 >= currentMapType.getDefaultCompareSourceIDs().length) { return }
 
       $(".comparesourcecheckbox").prop('checked', false)
       compareMapSourceIDArray = [null, null]
 
-      loadComparePreset(parseInt(e.key)-1)
+      loadComparePreset(parseInt(e.key))
       break
 
       case "marginsDropdownContent":
@@ -376,6 +376,10 @@ document.addEventListener('keypress', async function(e) {
     if (editMarginID)
     {
       toggleMarginEditing()
+    }
+    else if (isEnteringShiftAmount)
+    {
+      toggleEnteringShiftAmount()
     }
     else if (editCandidateNamePartyID)
     {
@@ -618,5 +622,5 @@ document.addEventListener('mouseup', function() {
 
 function isEditingTextbox()
 {
-  return editMarginID || editingRegionEVs || editingRegionMarginValue || editingRegionVotesharePercentages || editCandidateNamePartyID || editPartyMarginColor
+  return editMarginID || editingRegionEVs || editingRegionMarginValue || editingRegionVotesharePercentages || editCandidateNamePartyID || editPartyMarginColor || isEnteringShiftAmount
 }

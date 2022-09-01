@@ -548,6 +548,10 @@ function loadDataMap(shouldSetToMax, forceDownload, previousDateOverride, resetC
     {
       toggleMarginEditing(editMarginID)
     }
+    if (isEnteringShiftAmount)
+    {
+      toggleEnteringShiftAmount()
+    }
     if (editCandidateNamePartyID)
     {
       toggleCandidateNameEditing(editCandidateNamePartyID, null, true)
@@ -1057,6 +1061,10 @@ async function toggleEditing(stateToSet)
   if (editMarginID)
   {
     toggleMarginEditing(editMarginID)
+  }
+  if (isEnteringShiftAmount)
+  {
+    toggleEnteringShiftAmount()
   }
   if (editCandidateNamePartyID)
   {
@@ -2441,7 +2449,7 @@ function applyCompareToCustomMap()
     }
   }
 
-  currentCustomMapSource.updateMapData(resultMapArray, (new Date(getTodayString("/", false, "mdy"))).getTime(), true)
+  currentCustomMapSource.updateMapData(resultMapArray, (new Date(getTodayString("/", false, "mdy"))).getTime(), true, null, EditingMode.voteshare)
   currentMapSource = currentCustomMapSource
   updateNavBarForNewSource()
   loadDataMap()
