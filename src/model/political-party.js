@@ -258,6 +258,16 @@ var Independent2004JEParty = new PoliticalParty(
   defaultMarginNames
 )
 
+var Independent1992RPParty = new PoliticalParty(
+
+  "IND1992RP",
+  ["Perot"],
+  "Ind",
+  "Perot",
+  cloneObject(PoliticalPartyColors.purple),
+  defaultMarginNames
+)
+
 var Independent1988LBParty = new PoliticalParty(
   "IND1988LB",
   ["Bentsen"],
@@ -597,6 +607,7 @@ politicalParties[Independent2016RPParty.getID()] = Independent2016RPParty
 politicalParties[Independent2016JKParty.getID()] = Independent2016JKParty
 politicalParties[Independent2016SEParty.getID()] = Independent2016SEParty
 politicalParties[Independent2004JEParty.getID()] = Independent2004JEParty
+politicalParties[Independent1992RPParty.getID()] = Independent1992RPParty
 politicalParties[Independent1988LBParty.getID()] = Independent1988LBParty
 politicalParties[Independent1980JAParty.getID()] = Independent1980JAParty
 politicalParties[Independent1976EMParty.getID()] = Independent1976EMParty
@@ -634,10 +645,11 @@ politicalParties[IndependentGWParty.getID()] = IndependentGWParty
 politicalParties[IndependentGenericParty.getID()] = IndependentGenericParty
 
 var defaultDropdownPoliticalPartyIDs = [DemocraticParty.getID(), RepublicanParty.getID()]
-var mainPoliticalPartyIDs = [TossupParty.getID(), DemocraticParty.getID(), RepublicanParty.getID(), LibertarianParty.getID(), GreenParty.getID(), WhigParty.getID(), FreeSoilParty.getID(), NationalRepublicanParty.getID(), DemocraticRepublicanParty.getID(), FederalistParty.getID(), IndependentGenericParty.getID()]
+var mainPoliticalPartyIDs = [TossupParty.getID(), ReformParty.getID(), DemocraticParty.getID(), RepublicanParty.getID(), LibertarianParty.getID(), GreenParty.getID(), WhigParty.getID(), FreeSoilParty.getID(), NationalRepublicanParty.getID(), DemocraticRepublicanParty.getID(), FederalistParty.getID(), IndependentGenericParty.getID()]
 var majorThirdPartyCandidates = [
   Independent2016EMParty.getID(),
   Independent2004JEParty.getID(),
+  Independent1992RPParty.getID(),
   Independent1988LBParty.getID(),
   Independent1980JAParty.getID(),
   Independent1976EMParty.getID(),
